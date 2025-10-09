@@ -57,8 +57,6 @@ def guardar_tarea(request):
 
         try:
             num_fregados = int(num_fregados_str)
-            if not (1 <= num_fregados <= 5):
-                errors['num_fregados'] = 'El número de cacharros debe estar entre 1 y 5.'
         except ValueError:
             errors['num_fregados'] = 'El número de cacharros fregados debe ser un entero.'
 
