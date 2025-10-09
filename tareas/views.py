@@ -25,6 +25,7 @@ def tarea_info(request, tarea_id):
 
 # Tus categorías deben coincidir con el modelo
 CATEGORIAS_VALIDAS = {"CENA", "COMIDA"}
+PERSONAS_VALIDAS = {"Miguel", "David", "Pablo", "Raquel", "Miriam", "Papa", "Mama", "Lolo"}
 
 
 def guardar_tarea(request):
@@ -45,8 +46,12 @@ def guardar_tarea(request):
 
         if not persona:
             errors['persona'] = 'La persona es obligatoria.'
+        elif persona not in PERSONAS_VALIDAS:
+            errors['persona'] = 'Persona no válida.'
+
         if not descripcion:
             errors['descripcion'] = 'La descripción es obligatoria.'
+
         if tarea not in CATEGORIAS_VALIDAS:
             errors['tarea'] = 'Tarea no válida.'
 
@@ -75,6 +80,9 @@ def guardar_tarea(request):
                     ('CENA', 'Cena'),
                     ('COMIDA', 'Comida'),
                 ],
+                "personas": [
+                    'Miguel', 'David', 'Pablo', 'Raquel', 'Miriam', 'Papa', 'Mama', 'Lolo'
+                ]
             }
             request.session["name"] = persona
             return render(request, 'tareas/guardar_tarea.html', context)
@@ -99,7 +107,10 @@ def guardar_tarea(request):
         'tareas': [
             ('CENA', 'Cena'),
             ('COMIDA', 'Comida'),
-        ]
+        ],
+        "personas": [
+            'Miguel', 'David', 'Pablo', 'Raquel', 'Miriam', 'Papa', 'Mama', 'Lolo'
+        ],
     }
     return render(request, 'tareas/guardar_tarea.html', context)
 
