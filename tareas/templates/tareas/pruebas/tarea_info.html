@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de tareas</title>
+</head>
+<body>
+    <h1> {{ tarea }}</h1>
+    <h2> Descripcion de la tarea: </h2>
+    <ul>
+        <li><strong>Persona:</strong> {{ tarea.persona }}</li>
+        <li><strong>Descripción:</strong> {{ tarea.descripcion }}</li>
+        <li><strong>Fecha:</strong> {{ tarea.fecha }}</li>
+        <li><strong>Tarea:</strong> {{ tarea.tarea }}</li>
+        <li><strong>Quita la mesa:</strong> {{ tarea.quita_mesa }}</li>
+        <li><strong>Pone la mesa:</strong> {{ tarea.pone_mesa }}</li>
+        <li><strong>Saca el lavavajillas:</strong> {{ tarea.saca_lava }}</li>
+        <li><strong>Pone el lavavajillas:</strong> {{ tarea.pone_lava}}</li>
+        <li><strong>Numero de cacharros fregados:</strong> {{ tarea.num_fregados}}</li>
+    </ul>
+</body>
+</html>

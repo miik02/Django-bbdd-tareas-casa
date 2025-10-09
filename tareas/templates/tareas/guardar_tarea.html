@@ -1,0 +1,140 @@
+<!-- templates/tareas/crear.html -->
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Crear tarea</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-lg">
+    <h1 class="text-2xl font-bold mb-6 text-center">Crear nueva tarea</h1>
+
+    <form method="post" class="space-y-5" action="{% url 'tareas:guardar_tarea' %}">
+      {% csrf_token %}
+
+      <div>
+        <label for="id_persona" class="block mb-1">Persona</label>
+        <input
+          type="text"
+          id="id_persona"
+          name="persona"
+          value="{{ initial.persona|default:'' }}"
+          class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        {% if errors.persona %}<small class="text-red-400">{{ errors.persona }}</small>{% endif %}
+      </div>
+
+      <div>
+        <label for="id_descripcion" class="block mb-1">Descripción</label>
+        <textarea
+          id="id_descripcion"
+          name="descripcion"
+          rows="4"
+          class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >{{ initial.descripcion|default:'' }}</textarea>
+        {% if errors.descripcion %}<small class="text-red-400">{{ errors.descripcion }}</small>{% endif %}
+      </div>
+
+      <div>
+        <label for="id_tarea" class="block mb-1">Categoría</label>
+        <select
+          id="id_tarea"
+          name="tarea"
+          class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {% for value,label in tareas %}
+            <option value="{{ value }}" {% if value == initial.tarea %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+        {% if errors.categoria %}<small class="text-red-400">{{ errors.categoria }}</small>{% endif %}
+      </div>
+
+      <div class="space-y-2">
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            id="id_pone_mesa"
+            name="pone_mesa"
+            class="form-checkbox h-5 w-5 text-blue-500 bg-gray-700 border-gray-600"
+            {% if initial.pone_mesa %}checked{% endif %}
+            checked
+          >
+          <span class="ml-2">Pone mesa</span>
+        </label>
+
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            id="id_quita_mesa"
+            name="quita_mesa"
+            class="form-checkbox h-5 w-5 text-blue-500 bg-gray-700 border-gray-600"
+            {% if initial.quita_mesa %}checked{% endif %}
+          >
+          <span class="ml-2">Quita mesa</span>
+        </label>
+
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            id="id_pone_lava"
+            name="pone_lava"
+            class="form-checkbox h-5 w-5 text-blue-500 bg-gray-700 border-gray-600"
+            {% if initial.pone_lava %}checked{% endif %}
+            checked
+          >
+          <span class="ml-2">Pone lava</span>
+        </label>
+
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            id="id_quita_lava"
+            name="quita_lava"
+            class="form-checkbox h-5 w-5 text-blue-500 bg-gray-700 border-gray-600"
+            {% if initial.quita_lava %}checked{% endif %}
+          >
+          <span class="ml-2">Quita lava</span>
+        </label>
+
+        <label class="inline-flex items-center">
+          <input
+            type="checkbox"
+            id="id_era_mi_turno"
+            name="era_mi_turno"
+            class="form-checkbox h-5 w-5 text-blue-500 bg-gray-700 border-gray-600"
+            {% if initial.era_mi_turno %}checked{% endif %}
+            checked
+          >
+          <span class="ml-2">Era mi turno</span>
+        </label>
+      </div>
+
+      <div>
+        <label for="id_num_fregados" class="block mb-1">Cacharros fregados</label>
+        <input
+          type="number"
+          id="id_num_fregados"
+          name="num_fregados"
+          min="0"
+          value="{{ initial.num_fregados|default:0 }}"
+          class="p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-28"
+        >
+        {% if errors.esfuerzo %}<small class="text-red-400">{{ errors.esfuerzo }}</small>{% endif %}
+      </div>
+
+      <div class="text-center">
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold transition"
+        >
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

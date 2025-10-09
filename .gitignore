@@ -1,0 +1,6 @@
+# ignoramos bbdd
+db.sqlite
+
+# Python
+__pycache__/
+*.pyc

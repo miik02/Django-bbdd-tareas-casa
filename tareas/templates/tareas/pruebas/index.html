@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de tareas</title>
+</head>
+<body>
+    <h1>Bienvenido a la app de tareas</h1>
+    {% if tareas_list %}
+        <h2>Lista de tareas guardadas en la bbdd</h2>
+        {%for t in tareas_list%}
+            <li><a href="{% url 'tareas:tarea_info' t.id%}"> {{t}}</a></li>
+        {% endfor %}
+    {% else %}
+        <h2> No hay ninguna tarea registrada de momento</h2>
+    {% endif %}
+</body>
+</html>
