@@ -7,7 +7,7 @@ class Tarea(models.Model):
     
     persona = models.CharField(max_length=100)
     descripcion = models.TextField()
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
     tarea = models.CharField(max_length=20, choices=TAREAS, default="COMIDA")
     pone_mesa = models.BooleanField(default=True)
     quita_mesa = models.BooleanField(default=True)

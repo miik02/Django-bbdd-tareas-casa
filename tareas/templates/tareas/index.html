@@ -14,8 +14,16 @@
       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition"
     >
         <a href="{% url 'tareas:guardar_tarea' %}" 
-        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition inline-block">
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition inline-block pd-4">
         Fichar
+        </a>
+    </button>
+    <button
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition"
+    >
+        <a href="{% url 'tareas:dashboard' %}" 
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition inline-block">
+        Dashboards
         </a>
     </button>
   </div>

@@ -4,3 +4,7 @@ db.sqlite3
 # Python
 __pycache__/
 *.pyc
+
+# Fake data creation:
+tareas/management/commands/poblar_tareas.py
+tareas/management/commands/vaciar_bd.py

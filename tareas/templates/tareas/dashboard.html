@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center py-10">
+
+  <h1 class="text-6xl font-bold text-center mb-12 text-white">
+    <a href="{% url 'tareas:index' %}">Dashboard</a>
+</h1>
+
+  {% if sin_datos %}
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-lg text-center">
+      <h2 class="text-2xl font-bold mb-4">No hay datos disponibles</h2>
+      <p class="mb-6">Parece que no hay tareas registradas Por favor, añade algunas tareas para ver las estadísticas.</p>
+      <a href="{% url 'tareas:guardar_tarea' %}" 
+         class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition inline-block">
+        Añadir tarea
+      </a>
+    </div>
+  {% else %}
+
+    <form action="{% url 'tareas:dashboard' %}" method="post" class="space-y-5 mb-20 w-full max-w-5xl px-4 flex justify-center">
+      {% csrf_token %}
+      <div class="flex flex-wrap gap-4 items-center justify-start mb-8">
+        <div>
+          <label for="id_year" class="block mb-1 text-sm font-medium text-gray-300">Año</label>
+          <select id="id_year" name="year" class="p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {% for year in años %}
+              <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="id_month" class="block mb-1 text-sm font-medium text-gray-300">Mes</label>
+          <select id="id_month" name="month" class="p-2 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {% for mes in meses %}
+              <option value="{{ mes }}" {% if mes == selected_month %}selected{% endif %}>{{ mes }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+            Filtrar
+          </button>
+        </div>
+      </div>
+    </form>
+
+    {% if error %}
+      <small class="text-red-400">{{ error }}</small>
+    {% endif %}
+
+    <style>
+      @keyframes crecer {
+        from { transform: scaleY(0); opacity: 0; }
+        to { transform: scaleY(1); opacity: 1; }
+      }
+      @keyframes aparecer {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animar_podio {
+        transform-origin: bottom;
+        animation: crecer 0.8s ease-out forwards;
+      }
+      .animar_perdedor {
+        animation: aparecer 3s ease-in-out forwards;
+      }
+    </style>
+
+    <!-- Podio tareas -->
+    <div class="w-full max-w-5xl bg-gray-800 rounded-xl shadow-md p-6 mb-12 border border-gray-700">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-8">Los que más tareas han hecho son:</h2>
+      <div class="flex justify-center items-end gap-8">
+        <!-- Puesto 2 -->
+        <div class="flex flex-col items-center">
+          <p class="text-2xl sm:text-3xl mb-2">{{ganador2_tareas.0}}</p>
+          <div id="puesto2_tareas" class="relative bg-gray-400 rounded-lg w-28 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador2_tareas.1}}
+            </p>
+          </div>
+        </div>
+        <!-- Puesto 1 -->
+        <div class="flex flex-col items-center">
+          <p class="text-3xl sm:text-4xl font-bold mb-2">{{ganador1_tareas.0}}</p>
+          <div id="puesto1_tareas" class="relative bg-yellow-300 rounded-lg w-28 h-48 sm:w-32 sm:h-56 md:w-40 md:h-64 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador1_tareas.1}}
+            </p>
+          </div>
+        </div>
+        <!-- Puesto 3 -->
+        <div class="flex flex-col items-center">
+          <p class="text-xl sm:text-2xl mb-2">{{ganador3_tareas.0}}</p>
+          <div id="puesto3_tareas" class="relative bg-amber-700 rounded-lg w-28 h-16 sm:w-32 sm:h-40 md:w-40 md:h-48 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador3_tareas.1}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perdedor tareas -->
+    <div class="w-full max-w-5xl bg-gray-800 rounded-xl shadow-md p-6 mb-12 border border-gray-700">
+      <h2 class="text-3xl font-bold text-red-400 mb-8">El que menos tareas ha hecho es:</h2>
+      <div class="flex items-center justify-center gap-6" id="perdedor_tareas">
+        <img src="{% static 'icons/skull.svg' %}" alt="skull" class="h-32 w-32">
+        <div class="text-center">
+          <p class="text-2xl font-semibold">{{perdedor_tareas.0}}</p>
+          <p class="text-xl text-gray-300">{{perdedor_tareas.1}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Podio puntos -->
+    <div class="w-full max-w-5xl bg-gray-800 rounded-xl shadow-md p-6 mb-12 border border-gray-700">
+      <h2 class="text-3xl font-bold text-green-400 mb-8">Los que más puntos han tenido son:</h2>
+      <div class="flex justify-center items-end gap-8">
+        <!-- Puesto 2 -->
+        <div class="flex flex-col items-center">
+          <p class="text-2xl sm:text-3xl mb-2">{{ganador2_ptos.0}}</p>
+          <div id="puesto2_pts" class="relative bg-gray-400 rounded-lg w-28 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador2_ptos.1}}
+            </p>
+          </div>
+        </div>
+        <!-- Puesto 1 -->
+        <div class="flex flex-col items-center">
+          <p class="text-3xl sm:text-4xl font-bold mb-2">{{ganador1_ptos.0}}</p>
+          <div id="puesto1_pts" class="relative bg-yellow-300 rounded-lg w-28 h-48 sm:w-32 sm:h-56 md:w-40 md:h-64 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador1_ptos.1}}
+            </p>
+          </div>
+        </div>
+        <!-- Puesto 3 -->
+        <div class="flex flex-col items-center">
+          <p class="text-xl sm:text-2xl mb-2">{{ganador3_ptos.0}}</p>
+          <div id="puesto3_pts" class="relative bg-amber-700 rounded-lg w-28 h-16 sm:w-32 sm:h-40 md:w-40 md:h-48 opacity-0">
+            <p class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-3xl sm:text-4xl font-bold">
+              {{ganador3_ptos.1}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Ganadores por categorías -->
+      <div class="w-full max-w-5xl bg-gray-800 rounded-xl shadow-md p-6 mb-12 border border-gray-700">
+        <h2 class="text-3xl font-bold text-blue-400 mb-8">Ganadores por categoría:</h2>
+        <div class="flex flex-wrap justify-center gap-8">
+
+          <!-- Cacharros -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-xl font-semibold mb-2">Cacharros fregados</h3>
+            <div class="flex items-center gap-4">
+              <img src="{% static 'icons/fork-plate.svg' %}" alt="cacharros" class="h-24 w-24">
+              <div class="text-center">
+                <p class="text-lg font-bold">{{ganador_cacharros.0}}</p>
+                <p class="text-gray-300">{{ganador_cacharros.1}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Poner mesa -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-xl font-semibold mb-2">Poner mesa</h3>
+            <div class="flex items-center gap-4">
+              <img src="{% static 'icons/table.svg' %}" alt="poner mesa" class="h-24 w-24">
+              <div class="text-center">
+                <p class="text-lg font-bold">{{ganador_poner_mesa.0}}</p>
+                <p class="text-gray-300">{{ganador_poner_mesa.1}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quitar mesa -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-xl font-semibold mb-2">Quitar mesa</h3>
+            <div class="flex items-center gap-4">
+              <img src="{% static 'icons/table.svg' %}" alt="quitar mesa" class="h-24 w-24">
+              <div class="text-center">
+                <p class="text-lg font-bold">{{ganador_quitar_mesa.0}}</p>
+                <p class="text-gray-300">{{ganador_quitar_mesa.1}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meter lava -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-xl font-semibold mb-2">Meter lava</h3>
+            <div class="flex items-center gap-4">
+              <img src="{% static 'icons/dishwasher.svg' %}" alt="meter lava" class="h-24 w-24">
+              <div class="text-center">
+                <p class="text-lg font-bold">{{ganador_mete_lava.0}}</p>
+                <p class="text-gray-300">{{ganador_mete_lava.1}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sacar lava -->
+          <div class="flex flex-col items-center">
+            <h3 class="text-xl font-semibold mb-2">Sacar lava</h3>
+            <div class="flex items-center gap-4">
+              <img src="{% static 'icons/dishwasher.svg' %}" alt="sacar lava" class="h-24 w-24">
+              <div class="text-center">
+                <p class="text-lg font-bold">{{ganador_saca_lava.0}}</p>
+                <p class="text-gray-300">{{ganador_saca_lava.1}}</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endif %}
+    <!-- Script de animaciones -->
+    <script>
+      // Primer podio
+      window.addEventListener("load", () => {
+        setTimeout(() => document.getElementById("puesto2_tareas").classList.add("animar_podio"), 200);
+        setTimeout(() => document.getElementById("puesto1_tareas").classList.add("animar_podio"), 600);
+        setTimeout(() => document.getElementById("puesto3_tareas").classList.add("animar_podio"), 1000);
+      });
+
+      // Perdedor
+      window.addEventListener("load", () => {
+        document.getElementById("perdedor_tareas").classList.add("animar_perdedor");
+      });
+
+      // Segundo podio
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animar_podio");
+          } else {
+            entry.target.classList.remove("animar_podio");
+            entry.target.classList.add("opacity-0");
+          }
+        });
+      }, { threshold: 0 });
+
+      observer.observe(document.getElementById("puesto2_pts"));
+      observer.observe(document.getElementById("puesto1_pts"));
+      observer.observe(document.getElementById("puesto3_pts"));
+    </script>
+
+</body>
+</html>
